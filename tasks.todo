@@ -23,7 +23,8 @@ core:
             ☐ getDefinition
             ☐ validate
             ☐ submit answer
-        ☐ cache
+        ✔ cache @done(25-03-22 17:26)
+        ✔ catch API exceptions @done(25-03-22 17:19)
     tools:
         ✔ phpstan @done(25-03-22 15:34)
         ✔ phpcs @done(25-03-22 15:46)

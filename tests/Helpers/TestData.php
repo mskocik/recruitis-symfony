@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Helpers;
 
+use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
 class TestData
@@ -28,6 +29,18 @@ class TestData
     public static function unauthorizedJobListing(): array
     {
         return ['{"payload":null,"meta":{"message":"Authorization failed: token not found.","code":"api.error.unauthorized","duration":10}}', 401];
+    }
+
+    /**
+     * @return array<0: callable, 1: array<http_code: int>>
+     */
+    public static function transportExceptionResponse(): array
+    {
+        $throwOnCall = function () {
+            throw new TransportException('API error');
+        };
+
+        return [$throwOnCall, ['http_code' => 500]];
     }
 
     /**

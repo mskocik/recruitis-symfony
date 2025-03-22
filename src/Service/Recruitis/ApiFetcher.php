@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service\Recruitis;
 
+use App\Model\Recruitis\Enum\ResponseCode;
 use App\Model\Recruitis\Response\JobListingResponse;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -25,12 +27,10 @@ class ApiFetcher
     public function __construct(
         private HttpClientInterface $recruitisClient,
         private SerializerInterface $serializer,
+        private CacheItemPoolInterface $cache,
     ) {
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
     public function getJobs(int $page, int $pageSize = 10): JobListingResponse
     {
         $url = static::JOB_LIST.'?'.http_build_query([
@@ -38,23 +38,49 @@ class ApiFetcher
             'limit' => $pageSize,
         ]);
 
-        return $this->performRequest(JobListingResponse::class, $url);
+        return $this->performRequest(JobListingResponse::class, $url, cacheKey: "page_$page");
     }
 
     /**
      * @template T
      *
      * @param class-string<T> $responseType
+     * @param string $url
+     * @param string $cacheKey
+     * @param string $method
      *
      * @return T
-     *
-     * @throws TransportExceptionInterface
      */
-    private function performRequest(string $responseType, string $url, string $method = 'GET')
+    private function performRequest(string $responseType, string $url, string $cacheKey, string $method = 'GET')
     {
-        $response = $this->recruitisClient->request($method, $url);
-        $json = $response->getContent(false);
+        try {
+            $cachedItem = $this->cache->getItem($cacheKey);
+            if ($cachedItem->isHit()) {
+                return $cachedItem->get();
+            }
 
-        return $this->serializer->deserialize($json, $responseType, 'json');
+            $response = $this->recruitisClient->request($method, $url);
+            $json = $response->getContent(false);
+
+            $responseObject = $this->serializer->deserialize($json, $responseType, 'json');
+
+            $this->cache->save($cachedItem->set($responseObject));
+
+            return $responseObject;
+        } catch (TransportExceptionInterface $ex) {
+            $code = ResponseCode::API_UNAVAILABLE->value;
+            $message = $ex->getMessage();
+            $json = <<<JSON
+            {
+                "payload": null,
+                "meta": {
+                    "code": "$code",
+                    "message": "$message"
+                }
+            }
+            JSON;
+
+            return $this->serializer->deserialize($json, $responseType, 'json');
+        }
     }
 }

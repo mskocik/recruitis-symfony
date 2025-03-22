@@ -13,4 +13,6 @@ enum ResponseCode: string
     case NOT_FOUND = 'api.error.not_found';
 
     case ERROR_UNAUTHORIZED = 'api.error.unauthorized';
+
+    case API_UNAVAILABLE = 'api.error.system.unavailable';
 }
