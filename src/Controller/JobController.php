@@ -44,6 +44,8 @@ class JobController extends AbstractController
     /**
      * Enable creating URLs with placeholders.
      *
+     * @param array<string, mixed> $parameters
+     *
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */

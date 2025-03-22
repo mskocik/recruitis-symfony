@@ -12,10 +12,12 @@ class FormField
 
     public string $label;
 
+    /** @var string|int|array<string>|null */
     public string|int|array|null $value;
 
     public bool $required;
 
+    /** @var array<string, string|int> */
     public ?array $options;
 
     public bool $hidden;

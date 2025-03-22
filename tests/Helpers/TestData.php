@@ -32,7 +32,7 @@ class TestData
     }
 
     /**
-     * @return array<0: callable, 1: array<http_code: int>>
+     * @return array{0: callable, 1: array{'http_code': int}}
      */
     public static function transportExceptionResponse(): array
     {

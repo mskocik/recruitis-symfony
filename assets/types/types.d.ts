@@ -25,3 +25,11 @@ export type FormField = {
 export type FormDefinitionResponse = {
     fields: null|Array<FormField>
 }
+
+
+export type AnswerResponse = {
+    meta: {
+        code: string;
+        message: string
+    }
+}

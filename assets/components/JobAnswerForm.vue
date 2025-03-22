@@ -2,7 +2,7 @@
   <div class="answer-container bg-body" :class="{ 'collapsed': !initialized }">
     <div class="inner-content" id="answer-form">
       <button v-if="!initialized" @click="showForm" class="btn btn-primary w-100">Mám zájem o tuto pozici</button>
-      <form v-else method="post" :action="apiUrl" @submit.prevent="ajaxSubmit">
+      <form v-else-if="!isDone" method="post" :action="apiUrl" @submit.prevent="ajaxSubmit" autocomplete="off">
         <div class="row mb-3" v-for="field in formFields">
           <div class="col">
             <label :for="`${field.name}-${field.type}`">{{  field.label }} <span class="text-danger" v-if="field.required">*</span></label>
@@ -37,10 +37,18 @@
         <div class="row mb-3">
           <div class="col">
             <input v-for="hidden in hiddenFields" type="hidden" :name="hidden.name" :value="hidden.value">
-            <button type="submit" class="btn btn-primary w-100">Odeslat</button>
+            <button type="submit" class="btn btn-primary w-100 submit-btn">
+              <svg width="20" height="20" style="--loader: #fff">
+                <use xlink:href="#loader"></use>
+              </svg>
+              <span>Odeslat formulář</span>
+            </button>
           </div>
         </div>
       </form>
+      <div v-else class="p-5 text-center bg-success text-white">
+        Hotovo! 
+      </div>
     </div>
   
   </div>
@@ -48,17 +56,18 @@
   
   <script setup lang="ts">
   import { ref, onMounted, nextTick, computed } from 'vue';
-  import type { FormDefinitionResponse, FormField } from '~/types/types';
+  import type { AnswerResponse, FormDefinitionResponse, FormField } from '~/types/types';
   
   const props = defineProps({
     apiUrl: { type: String, required: true }
   });
   
   let formFields = ref<FormField[]>([]);
-  let hiddenFields = computed<FormField[]>(formDefinition => (formDefinition || []).filter(f => f.hidden === true));
-
+  let hiddenFields = ref<FormField[]>([]);
+  
   let initialized = ref(false);
   let isSubmitting = ref(false);
+  let isDone = ref(false);
   
   function fetchFormDefinition() {
     fetch(props.apiUrl, { method: 'get' })
@@ -68,6 +77,7 @@
           formFields.value = json.fields
             .filter(f => f.hidden === false)
             .sort((a, b) => a.order <= b.order ? -1 : 1);
+          hiddenFields.value = json.fields.filter(f => f.hidden === true);
 
           return;
         }
@@ -83,21 +93,28 @@
     });
   }
   
-  function ajaxSubmit(e) {
-    console.log(e);
+  function ajaxSubmit(e: { target: HTMLFormElement }) {
     if (isSubmitting.value) return;
   
     isSubmitting.value = true;
-  
+    const form = e.target;
+    const submitBtn = form.querySelector('.submit-btn');
+    submitBtn?.classList.add('submitting');
+
     fetch(props.apiUrl, {
       method: 'post',
-      body: new FormData(e.target)
-    }).then(res => res.json)
-      .then(json => {
-        console.log('data');
+      body: new FormData(form)
+    }).then(res => res.json())
+      .then((json: AnswerResponse) => {
+        if (json.meta.code.includes('api.error')) {
+          alert(json.meta.message);
+        } else {
+          isDone.value = true;
+        }
       })
       .finally(() => {
         isSubmitting.value = false;
+        submitBtn?.classList.remove('submitting');
       });
   }
   
@@ -116,6 +133,15 @@
   }
   .inner-content {
     margin: 0.5rem 0;
+  }
+  .submit-btn svg {
+    display: none;
+  }
+  .submit-btn.submitting span {
+    display: none;
+  }
+  .submit-btn.submitting svg {
+    display: inline;
   }
   </style>
   

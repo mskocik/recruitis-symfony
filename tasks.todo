@@ -4,25 +4,30 @@ core:
             homepage:
                 ✔ base @done(25-03-22 15:21)
             detail:
-                ☐ base
+                ✔ base @done(25-03-22 20:40)
         api:
-            ☐ paging
+            ✔ paging @done(25-03-22 20:40)
             form related:
-                ☐ get definition
-                ☐ validation & submit
+                ✔ get definition @done(25-03-22 20:40)
+                ✘ validation @cancelled(25-03-22 20:40) (not supported)
+                ✔ submit @done(25-03-22 20:40)
     frontend:
         ✔ setup frontend @done(25-03-22 17:44)
         vue listing:
-            ☐ fetch initial page
-            ☐ fetch additional pages
+            ✔ fetch initial page @done(25-03-22 20:40)
+            ✔ fetch additional pages @done(25-03-22 20:40)
+        vue detail:
+            ✔ render form @done(25-03-22 20:41)
+            ✔ submit form @done(25-03-22 20:58)
+            ✔ show success to the user @done(25-03-22 20:58)
     data (repo & recruitis):
         jobs:
             ✔ findPage @done(25-03-22 15:21)
-            ☐ findJob
+            ✔ findJob @done(25-03-22 20:40)
         form:
-            ☐ getDefinition
-            ☐ validate
-            ☐ submit answer
+            ✔ getDefinition @done(25-03-22 20:40)
+            ✘ validate @cancelled(25-03-22 20:40)
+            ✔ submit answer @done(25-03-22 20:40)
         ✔ cache @done(25-03-22 17:26)
         ✔ catch API exceptions @done(25-03-22 17:19)
     tools:
@@ -36,6 +41,7 @@ core:
 
     
 advanced:
+    ☐ override
     ☐ swup navigation
     ☐ history control (vue)
     ☐ load page with cached-only results (vue)

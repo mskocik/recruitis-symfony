@@ -7,11 +7,13 @@ namespace App\Service\Recruitis;
 use App\Model\Recruitis\Entity\FormDefinitionPayload;
 use App\Model\Recruitis\Entity\JobDetail;
 use App\Model\Recruitis\Enum\ResponseCode;
+use App\Model\Recruitis\Response\AnswerResponse;
 use App\Model\Recruitis\Response\CacheableResponse;
 use App\Model\Recruitis\Response\FormDefinitionResponse;
 use App\Model\Recruitis\Response\JobDetailResponse;
 use App\Model\Recruitis\Response\JobListingResponse;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -63,13 +65,52 @@ class ApiFetcher
     }
 
     /**
+     * @param array<string, string|int> $postData
+     *
+     * @return \stdClass
+     *
+     * @throws InvalidArgumentException
+     */
+    public function validatePostData(int $jobId, array $postData)
+    {
+        $url = sprintf(static::JOB_FORM_VALIDATE, $jobId);
+        $res = $this->performRequest(\stdClass::class, $url, method: 'POST', options: [
+            'headers' => [
+                'content-type' => 'application/json',
+            ],
+            'body' => json_encode($postData),
+        ]);
+
+        return $res;
+    }
+
+    /**
+     * @param array<string, string|int> $postData
+     *
+     * @throws InvalidArgumentException
+     */
+    public function submitAnswer(int $jobId, array $postData): AnswerResponse
+    {
+        $url = sprintf(static::ANSWERS, $jobId);
+        $response = $this->performRequest(AnswerResponse::class, $url, method: 'POST', options: [
+            'headers' => [
+                'content-type' => 'application/json',
+            ],
+            'body' => json_encode($postData),
+        ]);
+
+        return $response;
+    }
+
+    /**
      * @template T
      *
-     * @param class-string<T> $responseType
+     * @param class-string<T>      $responseType
+     * @param array<string, mixed> $options
      *
      * @return T
      */
-    private function performRequest(string $responseType, string $url, string $cacheKey, string $method = 'GET')
+    private function performRequest(string $responseType, string $url, string $cacheKey = 'none', string $method = 'GET', array $options = [])
     {
         try {
             $cachedItem = $this->cache->getItem($cacheKey);
@@ -77,7 +118,7 @@ class ApiFetcher
                 return $cachedItem->get();
             }
 
-            $response = $this->recruitisClient->request($method, $url);
+            $response = $this->recruitisClient->request($method, $url, $options);
             $json = $response->getContent(false);
 
             $responseObject = $this->serializer->deserialize($json, $responseType, 'json');
