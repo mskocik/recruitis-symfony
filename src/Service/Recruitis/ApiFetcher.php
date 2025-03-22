@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service\Recruitis;
 
+use App\Model\Recruitis\Entity\FormDefinitionPayload;
 use App\Model\Recruitis\Entity\JobDetail;
 use App\Model\Recruitis\Enum\ResponseCode;
+use App\Model\Recruitis\Response\CacheableResponse;
+use App\Model\Recruitis\Response\FormDefinitionResponse;
 use App\Model\Recruitis\Response\JobDetailResponse;
 use App\Model\Recruitis\Response\JobListingResponse;
 use Psr\Cache\CacheItemPoolInterface;
@@ -51,7 +54,13 @@ class ApiFetcher
         return $response->payload;
     }
 
+    public function getJobFormDefinition(int $jobId): ?FormDefinitionPayload
+    {
+        $url = sprintf(static::JOB_FORM, $jobId);
+        $response = $this->performRequest(FormDefinitionResponse::class, $url, cacheKey: "jobForm_$jobId");
 
+        return $response->payload;
+    }
 
     /**
      * @template T
@@ -73,8 +82,10 @@ class ApiFetcher
 
             $responseObject = $this->serializer->deserialize($json, $responseType, 'json');
 
-            $cachedItem->expiresAfter(10);
-            $this->cache->save($cachedItem->set($responseObject));
+            if ('GET' === $method && $responseObject instanceof CacheableResponse && $responseObject->isCacheable()) {
+                $cachedItem->expiresAfter(10);
+                $this->cache->save($cachedItem->set($responseObject));
+            }
 
             return $responseObject;
         } catch (TransportExceptionInterface $ex) {

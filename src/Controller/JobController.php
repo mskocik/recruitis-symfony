@@ -26,6 +26,19 @@ class JobController extends AbstractController
     #[Route(path: '/job/{id<\d+|{id}>}/{slug}', name: 'job_detail')]
     public function detail(Request $request, JobRepository $jobRepository): Response
     {
+        $jobId = $request->attributes->getInt('id');
+
+        $entity = $jobRepository->getById($jobId);
+
+        $response = new Response();
+        if (null === $entity) {
+            $response->setStatusCode(404);
+        }
+
+        return $this->render('job/detail.html.twig', [
+            'job' => $entity,
+            'job_form_url' => $this->generateUrl('api_jobForm', ['id' => $entity->jobId]),
+        ], $response);
     }
 
     /**

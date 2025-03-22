@@ -1,0 +1,21 @@
+{% extends './base.html.twig' %}
+
+    {% block body %}
+    <div class="bg-body rounded shadow-sm px-3 pt-2">
+        <h3 class="my-3 border-bottom">
+            {{ job.title }}
+        </h3>
+    
+        <div class="position-relative mb-5">
+            <div class="border-bottom">
+            {{ job.description|raw }}
+            </div>
+            <vue-answer-form api-url="{{ job_form_url }}" />
+        </div>
+    </div>
+    {% endblock %}
+    
+    {% block title %}
+    {{ job.title }}
+    {% endblock %}
+    
