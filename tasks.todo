@@ -11,7 +11,7 @@ core:
                 ☐ get definition
                 ☐ validation & submit
     frontend:
-        ☐ setup frontend
+        ✔ setup frontend @done(25-03-22 17:44)
         vue listing:
             ☐ fetch initial page
             ☐ fetch additional pages
@@ -35,6 +35,10 @@ core:
         ☐ readme update
 
     
+advanced:
+    ☐ swup navigation
+    ☐ history control (vue)
+    ☐ load page with cached-only results (vue)
 
     
     

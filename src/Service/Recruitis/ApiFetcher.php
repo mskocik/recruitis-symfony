@@ -45,9 +45,6 @@ class ApiFetcher
      * @template T
      *
      * @param class-string<T> $responseType
-     * @param string $url
-     * @param string $cacheKey
-     * @param string $method
      *
      * @return T
      */
