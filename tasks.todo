@@ -1,0 +1,39 @@
+core:
+    controllers:
+        views:
+            homepage:
+                ✔ base @done(25-03-22 15:21)
+            detail:
+                ☐ base
+        api:
+            ☐ paging
+            form related:
+                ☐ get definition
+                ☐ validation & submit
+    frontend:
+        ☐ setup frontend
+        vue listing:
+            ☐ fetch initial page
+            ☐ fetch additional pages
+    data (repo & recruitis):
+        jobs:
+            ✔ findPage @done(25-03-22 15:21)
+            ☐ findJob
+        form:
+            ☐ getDefinition
+            ☐ validate
+            ☐ submit answer
+        ☐ cache
+    tools:
+        ✔ phpstan @done(25-03-22 15:34)
+        ✔ phpcs @done(25-03-22 15:46)
+        ✔ tests @done(25-03-22 15:21)
+        ☐ docker
+    deploy:
+        ☐ deploy
+        ☐ readme update
+
+    
+
+    
+    

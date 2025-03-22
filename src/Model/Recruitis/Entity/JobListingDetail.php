@@ -1,9 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Model\Recruitis\Entity;
 
 use Symfony\Component\String\Slugger\AsciiSlugger;
-
 
 class JobListingDetail
 {
@@ -14,6 +15,6 @@ class JobListingDetail
         public string $title,
         // public string $description
     ) {
-      $this->slug = (new AsciiSlugger())->slug($title)->toString();
+        $this->slug = (new AsciiSlugger())->slug($title)->toString();
     }
 }

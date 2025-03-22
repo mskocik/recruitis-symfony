@@ -14,9 +14,12 @@ class JobTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
 
-        $this->assertResponseIsSuccessful(); 
+        $this->assertResponseIsSuccessful();
     }
 
+    /**
+     * @return array<string[]>
+     */
     public static function urlProvider(): array
     {
         return [
