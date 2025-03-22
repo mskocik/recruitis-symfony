@@ -10,11 +10,13 @@ class JobListingDetail
 {
     public string $slug;
 
+    /** @var EmploymentType[]|EmploymentType */
+    public array|EmploymentType $employment;
+
     public function __construct(
         public int $jobId,
         public string $title,
-        // public string $description
     ) {
-        $this->slug = (new AsciiSlugger())->slug($title)->toString();
+        $this->slug = strtolower((new AsciiSlugger())->slug($title)->toString());
     }
 }

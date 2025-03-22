@@ -12,7 +12,7 @@ class JobTest extends WebTestCase
     public function testNavigation(string $url): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $client->request('GET', $url);
 
         $this->assertResponseIsSuccessful();
     }

@@ -34,7 +34,7 @@ class ApiFetcherTest extends KernelTestCase
             $this->container->get(SerializerInterface::class),
             $this->container->get(CacheItemPoolInterface::class)
         );
-        $response = $apiFetcher->getJobs($page++);
+        $response = $apiFetcher->getJobPage($page++);
 
         match ($response->meta->code) {
             ResponseCode::FOUND => $this->assertIsArray($response->payload),

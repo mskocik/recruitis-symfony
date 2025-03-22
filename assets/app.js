@@ -1,3 +1,2 @@
-import "./app.css";
-
-console.log("Happy coding !!");
+import './app.css';
+import './components.js';

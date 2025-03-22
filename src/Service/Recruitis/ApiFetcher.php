@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service\Recruitis;
 
+use App\Model\Recruitis\Entity\JobDetail;
 use App\Model\Recruitis\Enum\ResponseCode;
+use App\Model\Recruitis\Response\JobDetailResponse;
 use App\Model\Recruitis\Response\JobListingResponse;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -31,7 +33,7 @@ class ApiFetcher
     ) {
     }
 
-    public function getJobs(int $page, int $pageSize = 10): JobListingResponse
+    public function getJobPage(int $page, int $pageSize = 10): JobListingResponse
     {
         $url = static::JOB_LIST.'?'.http_build_query([
             'page' => $page,
@@ -40,6 +42,16 @@ class ApiFetcher
 
         return $this->performRequest(JobListingResponse::class, $url, cacheKey: "page_$page");
     }
+
+    public function getJobById(int $jobId): ?JobDetail
+    {
+        $url = sprintf(static::JOB_DETAIL, $jobId);
+        $response = $this->performRequest(JobDetailResponse::class, $url, cacheKey: "job_$jobId");
+
+        return $response->payload;
+    }
+
+
 
     /**
      * @template T
@@ -61,6 +73,7 @@ class ApiFetcher
 
             $responseObject = $this->serializer->deserialize($json, $responseType, 'json');
 
+            $cachedItem->expiresAfter(10);
             $this->cache->save($cachedItem->set($responseObject));
 
             return $responseObject;

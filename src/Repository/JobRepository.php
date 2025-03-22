@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Model\Recruitis\Entity\JobDetail;
 use App\Model\Recruitis\Response\JobListingResponse;
 use App\Service\Recruitis\ApiFetcher;
 
@@ -16,6 +17,11 @@ class JobRepository
 
     public function findAllOnPage(int $page = 1): JobListingResponse
     {
-        return $this->recruitisApi->getJobs($page);
+        return $this->recruitisApi->getJobPage($page);
+    }
+
+    public function getById(int $jobId): ?JobDetail
+    {
+        return $this->recruitisApi->getJobById($jobId);
     }
 }
