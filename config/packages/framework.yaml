@@ -16,6 +16,15 @@ framework:
     #fragments: true
     php_errors:
         log: true
+    
+    http_client:
+        scoped_clients:
+            recruitis.client:
+                base_uri: !php/const App\Service\Recruitis\ApiFetcher::API_URL_BASE
+                auth_bearer: '%env(RECRUITIS_API_KEY)%'
+
+    serializer:
+      name_converter: serializer.name_converter.camel_case_to_snake_case
 
 when@test:
     framework:
