@@ -25,8 +25,8 @@
         </div>
       </div>
     </div>
-      <button v-if="!paginatorMode && initialized" type="button" class="btn btn-sm w-100 mt-4" :class="{ 'btn-outline-secondary': !isFetching, 'btn-light': isFetching}" @click="fetchNextPage">
-        <svg v-if="isFetching" width="32" height="32" >
+      <button v-if="showLoadMoreButton" type="button" class="btn btn-sm w-100 mt-4" :class="{ 'btn-outline-secondary': !isFetching, 'btn-light': isFetching}" @click="fetchNextPage">
+        <svg v-if="isFetching" width="20" height="20" >
           <use xlink:href="#loader"></use>
         </svg>
         <span v-else>Načíst další</span>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, computed } from 'vue';
   import { swap_placeholders } from '~/utils/Helpers';
   import type { Pagination, JobListing, JobListingResponse } from '~/types/types';
   import Paginator from './Paginator.vue';
@@ -66,6 +66,12 @@
   let isFetching = ref(false);
   let fetch_error = ref(false);
   let pagination = ref<Pagination|null>(null);
+
+  let showLoadMoreButton = computed<boolean>(() => {
+    if (paginatorMode === true || !pagination.value) return false;
+
+    return initialized && pagination.value.entriesTo < pagination.value.entriesTotal;
+  });
 
   const COLORS = [
     'blue', 'red', 'green', 'orange', 'purple'
@@ -107,7 +113,11 @@
         ? json.payload
         : listing.value.concat(...json.payload);
 
-      if (pagination.value === null) {
+      if (paginatorMode) {
+        if (pagination.value === null) {
+          pagination.value = json.meta;
+        }
+      } else {
         pagination.value = json.meta;
       }
 
