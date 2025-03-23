@@ -47,16 +47,17 @@
   import { ref, onMounted } from 'vue';
   import { swap_placeholders } from '~/utils/Helpers';
   import type { Pagination, JobListing, JobListingResponse } from '~/types/types';
-import Paginator from './Paginator.vue';
+  import Paginator from './Paginator.vue';
 
   const props = defineProps({
     apiUrl: { type: String, required: true },
     historyUrl: { type: String, required: true },
     detailUrl: { type: String, required: true },
     page: { type: Number, default: 1},
+    cachedResponse: { type: String }
   });
 
-  const paginatorMode = props.page !== 1;
+  const paginatorMode = props.page != 1;
 
   const dummyListing = Array(5);
   let currentPage = ref(props.page);
@@ -80,21 +81,7 @@ import Paginator from './Paginator.vue';
     return fetch(url)
       .then(res => res.json())
       .then((json: JobListingResponse) => {
-        currentPage.value = pageToFetch;
-        if (json.payload === null) {
-          listing.value = [];
-          return;
-        }
-
-        listing.value = paginatorMode
-          ? json.payload
-          : listing.value.concat(...json.payload);
-
-        if (pagination.value === null) {
-          pagination.value = json.meta;
-        }
-
-        initialized.value && history.pushState({ source: 'swup' }, '', swap_placeholders(props.historyUrl, { page: pageToFetch }));
+        responseToData(json, pageToFetch)
       })
       .catch(e => {
         fetch_error.value = true;
@@ -103,6 +90,24 @@ import Paginator from './Paginator.vue';
         isFetching.value = false;
         paginatorMode && window.swup.progressBar.stopShowingProgress();
       });
+  }
+
+  function responseToData(json: JobListingResponse, pageToFetch: number) {
+    currentPage.value = pageToFetch;
+      if (json.payload === null) {
+        listing.value = [];
+        return;
+      }
+
+      listing.value = paginatorMode
+        ? json.payload
+        : listing.value.concat(...json.payload);
+
+      if (pagination.value === null) {
+        pagination.value = json.meta;
+      }
+
+      initialized.value && history.pushState({ source: 'swup' }, '', swap_placeholders(props.historyUrl, { page: pageToFetch }));
   }
 
 
@@ -115,10 +120,19 @@ import Paginator from './Paginator.vue';
   }
 
   onMounted(() => {
+    if (props.cachedResponse) {
+      const json: JobListingResponse = JSON.parse(props.cachedResponse);
+      responseToData(json, currentPage.value);
+      history.pushState({ source: 'swup' }, '', location.pathname);
+      initialized.value = true;
+
+      return;
+    }
     fetchPage(props.page)
       .then(() => {
         history.pushState({ source: 'swup' }, '', location.pathname);
         initialized.value = true;
       });
+
   });
 </script>

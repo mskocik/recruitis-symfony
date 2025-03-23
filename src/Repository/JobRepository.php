@@ -20,6 +20,11 @@ class JobRepository
         return $this->recruitisApi->getJobPage($page);
     }
 
+    public function findAllOnPageCached(int $page = 1): ?JobListingResponse
+    {
+        return $this->recruitisApi->useCacheOnly()->getJobPage($page);
+    }
+
     public function getById(int $jobId): ?JobDetail
     {
         return $this->recruitisApi->getJobById($jobId);

@@ -31,14 +31,23 @@ class ApiFetcher
     public const /* /jobs/{id}/form/validate */
         ANSWERS = '/api2/answers';
 
+    private bool $fromCacheOnly = false;
+
     public function __construct(
         private HttpClientInterface $recruitisClient,
         private SerializerInterface $serializer,
-        private CacheItemPoolInterface $cache
+        private CacheItemPoolInterface $cache,
     ) {
     }
 
-    public function getJobPage(int $page, int $pageSize = 10): JobListingResponse
+    public function useCacheOnly(): static
+    {
+        $this->fromCacheOnly = true;
+
+        return $this;
+    }
+
+    public function getJobPage(int $page, int $pageSize = 10): ?JobListingResponse
     {
         $url = static::JOB_LIST.'?'.http_build_query([
             'page' => $page,
@@ -114,7 +123,9 @@ class ApiFetcher
     {
         try {
             $cachedItem = $this->cache->getItem($cacheKey);
-            if ($cachedItem->isHit()) {
+            if ($cachedItem->isHit() || $this->fromCacheOnly) {
+                $this->fromCacheOnly = false;
+
                 return $cachedItem->get();
             }
 
@@ -124,7 +135,7 @@ class ApiFetcher
             $responseObject = $this->serializer->deserialize($json, $responseType, 'json');
 
             if ('GET' === $method && $responseObject instanceof CacheableResponse && $responseObject->isCacheable()) {
-                $cachedItem->expiresAfter(10);
+                $cachedItem->expiresAfter(300);
                 $this->cache->save($cachedItem->set($responseObject));
             }
 

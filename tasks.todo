@@ -42,9 +42,9 @@ core:
     
 advanced:
     ☐ override
-    ☐ swup navigation
-    ☐ history control (vue)
-    ☐ load page with cached-only results (vue)
+    ✔ swup navigation @done(25-03-23 15:11)
+    ✔ history control (vue) @done(25-03-23 15:11)
+    ✔ load page with cached-only results (vue) @done(25-03-23 15:28)
 
     
     

@@ -2,7 +2,6 @@ body {
   background-color: #eeeeee;
 }
 
-// Bootstrap Loading Skeleton
 @keyframes opacity_pulse {
   0% {
     opacity: 0.1;

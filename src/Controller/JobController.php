@@ -14,13 +14,17 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class JobController extends AbstractController
 {
     #[Route(path: '/{page<\d+|{page}>?1}', name: 'home')]
-    public function index(Request $request): Response
+    public function index(Request $request, JobRepository $jobRepository): Response
     {
+        $page = $request->attributes->getInt('page');
+        $response = $jobRepository->findAllOnPageCached($page);
+
         return $this->render('job/index.html.twig', [
             'listing_apiUrl' => $this->generateUrl('api_page', ['page' => '{page}']),
             'listing_detailUrl' => $this->generateUrl('job_detail', ['id' => '{id}', 'slug' => '{slug}']),
             'listing_historyUrl' => $this->generateUrl('home', ['page' => '{page}']),
-            'listing_page' => $request->attributes->getInt('page'),
+            'listing_page' => $page,
+            'listing_cache' => $response ? json_encode($response) : null
         ]);
     }
 
