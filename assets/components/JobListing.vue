@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="d-flex text-body-secondary pt-3" v-for="job in listing">
-      <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#007bff"></rect></svg>
+      <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" :fill="COLORS[job.jobId % 5]"></rect></svg>
       <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
         <a :href="makeLink(job)">
           <strong class="d-block text-gray-dark" :data-swup-morph="`job-${job.jobId}`">{{ job.title }}</strong>
@@ -66,6 +66,10 @@
   let isFetching = ref(false);
   let fetch_error = ref(false);
   let pagination = ref<Pagination|null>(null);
+
+  const COLORS = [
+    'blue', 'red', 'green', 'orange', 'purple'
+  ];
 
   function fetchPage(pageToFetch?: number) {
     if (isFetching.value === true) return Promise.resolve(1);
