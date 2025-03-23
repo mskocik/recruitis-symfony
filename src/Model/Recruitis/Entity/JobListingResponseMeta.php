@@ -6,11 +6,11 @@ namespace App\Model\Recruitis\Entity;
 
 class JobListingResponseMeta extends ResponseMeta
 {
-    public int $entries_from;
+    public int $entriesFrom;
 
-    public int $entries_to;
+    public int $entriesTo;
 
-    public int $entries_total;
+    public int $entriesTotal;
 
-    public int $entries_sum;
+    public int $entriesSum;
 }

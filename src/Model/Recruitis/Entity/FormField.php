@@ -17,7 +17,7 @@ class FormField
 
     public bool $required;
 
-    /** @var array<string, string|int> */
+    /** @var array<string, string|int>|null */
     public ?array $options;
 
     public bool $hidden;

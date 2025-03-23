@@ -7,8 +7,21 @@ export type JobListing = {
     }
 }
 
+type Meta = {
+    code: string;
+    message: string
+}
+
+export type Pagination = {
+    entriesFrom: number;
+    entriesSum: number;
+    entriesTo: number;
+    entriesTotal: number;
+}
+
 export type JobListingResponse = {
     payload: null|Array<JobListing>
+    meta: Pagination & Meta
 }
 
 export type FormField = {
@@ -26,10 +39,6 @@ export type FormDefinitionResponse = {
     fields: null|Array<FormField>
 }
 
-
 export type AnswerResponse = {
-    meta: {
-        code: string;
-        message: string
-    }
+    meta: Meta
 }

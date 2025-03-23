@@ -19,6 +19,7 @@ class JobController extends AbstractController
         return $this->render('job/index.html.twig', [
             'listing_apiUrl' => $this->generateUrl('api_page', ['page' => '{page}']),
             'listing_detailUrl' => $this->generateUrl('job_detail', ['id' => '{id}', 'slug' => '{slug}']),
+            'listing_historyUrl' => $this->generateUrl('home', ['page' => '{page}']),
             'listing_page' => $request->attributes->getInt('page'),
         ]);
     }

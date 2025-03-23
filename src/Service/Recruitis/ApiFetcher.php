@@ -34,7 +34,7 @@ class ApiFetcher
     public function __construct(
         private HttpClientInterface $recruitisClient,
         private SerializerInterface $serializer,
-        private CacheItemPoolInterface $cache,
+        private CacheItemPoolInterface $cache
     ) {
     }
 
