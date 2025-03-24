@@ -1,6 +1,6 @@
 # Job Symfony
 
-Job listing app developed with Symfony & vuejs. App provides smooth and fast user experience, especially when navigating to job detail page and back. All pages are accessible directly, even though that we use 
+Job listing app developed with Symfony & vuejs. App provides smooth and fast user experience, especially when navigating to job detail page and back. All pages are accessible directly, even though that additional offerings are fetched dynamically.
 
 ## Live demo
 
@@ -14,7 +14,7 @@ Requirements:
 - composer
 - symfony CLI
 - npm
-  - [optional] pnpm (if `pnpm` is not installed, run `npm install -g pnpm@latest-10`), but lock file is for `pnpm`. If you want to use `npm` replace `pnpm` with `npm` in all commands
+  - [optional] pnpm (if `pnpm` is not installed, run `npm install -g pnpm@latest-10`). If you want to use `npm` replace `pnpm` with `npm` in all commands, but lock file is for `pnpm`
 
 Clone repository
 
@@ -62,4 +62,4 @@ Start server through Symfony CLI
 symfony server:start
 ```
 
-Visit http://127.0.0.1:8000 
+Visit http://127.0.0.1:8000
